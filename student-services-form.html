@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>خدمات طلابية - اطلب خدمتك</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1a4f7a;
+    --accent: #f5a623;
+    --accent2: #3dbfb8;
+    --soft: #eaf4fb;
+    --card: #ffffff;
+    --text: #1c2b3a;
+    --muted: #7a91a3;
+    --border: #d6e8f5;
+    --danger: #e05555;
+    --success: #2dba74;
+    --radius: 18px;
+    --shadow: 0 8px 40px rgba(26,79,122,0.12);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: linear-gradient(145deg, #0f3460 0%, #1a4f7a 40%, #1a7a6e 100%);
+    min-height: 100vh;
+    padding: 30px 16px 60px;
+    color: var(--text);
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -120px; left: -120px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(245,166,35,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -100px; right: -100px;
+    width: 350px; height: 350px;
+    background: radial-gradient(circle, rgba(61,191,184,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .page-wrapper {
+    max-width: 640px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Header ── */
+  .hero {
+    text-align: center;
+    padding: 10px 0 36px;
+    animation: fadeDown 0.7s ease both;
+  }
+  .hero .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 18px;
+    border-radius: 50px;
+    margin-bottom: 18px;
+    backdrop-filter: blur(6px);
+  }
+  .hero h1 {
+    font-family: 'Tajawal', sans-serif;
+    font-size: clamp(2rem, 7vw, 3rem);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.2);
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.75);
+    max-width: 420px;
+    margin: 0 auto;
+    line-height: 1.8;
+  }
+
+  /* ── Features strip ── */
+  .features {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+    animation: fadeUp 0.7s 0.1s ease both;
+  }
+  .feat {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 16px;
+    border-radius: 50px;
+    backdrop-filter: blur(6px);
+  }
+  .feat .icon { font-size: 15px; }
+
+  /* ── Card ── */
+  .form-card {
+    background: var(--card);
+    border-radius: 28px;
+    padding: 36px 32px;
+    box-shadow: var(--shadow), 0 2px 8px rgba(0,0,0,0.08);
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+
+  .section-title {
+    font-family: 'Tajawal', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(to left, transparent, var(--border));
+    border-radius: 2px;
+  }
+
+  /* ── Service Picker ── */
+  .services-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .service-card {
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 12px;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    position: relative;
+    background: #fafcff;
+    text-align: center;
+    user-select: none;
+  }
+  .service-card:hover { border-color: var(--accent2); transform: translateY(-2px); }
+  .service-card.active {
+    border-color: var(--primary);
+    background: var(--soft);
+    box-shadow: 0 4px 20px rgba(26,79,122,0.12);
+  }
+  .service-card .check {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--primary);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 11px;
+  }
+  .service-card.active .check { display: flex; }
+  .service-card .svc-icon { font-size: 28px; margin-bottom: 6px; display: block; }
+  .service-card .svc-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    display: block;
+    margin-bottom: 3px;
+  }
+  .service-card .svc-desc {
+    font-size: 11.5px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .service-card .svc-price {
+    display: inline-block;
+    margin-top: 7px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 20px;
+  }
+
+  /* ── Form Fields ── */
+  .fields-group { margin-bottom: 24px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 7px;
+  }
+  .field label .req { color: var(--danger); margin-right: 2px; }
+  .field input, .field select, .field textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: #fafcff;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    direction: rtl;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(26,79,122,0.08);
+    background: #fff;
+  }
+  .field input::placeholder, .field textarea::placeholder { color: #b0c4d4; }
+  .field textarea { resize: none; min-height: 90px; line-height: 1.7; }
+  .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 7L11 1' stroke='%231a4f7a' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: left 14px center; padding-left: 36px; }
+
+  /* ── Level Tabs ── */
+  .level-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .level-tab {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    font-family: 'Cairo', sans-serif;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--muted);
+    background: #fafcff;
+    transition: all 0.2s;
+  }
+  .level-tab:hover { border-color: var(--accent2); color: var(--text); }
+  .level-tab.active { border-color: var(--primary); background: var(--soft); color: var(--primary); }
+
+  /* ── Delivery ── */
+  .delivery-row {
+    display: flex;
+    gap: 10px;
+  }
+  .delivery-opt {
+    flex: 1;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Cairo', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    background: #fafcff;
+  }
+  .delivery-opt:hover { border-color: var(--accent2); }
+  .delivery-opt.active { border-color: var(--accent); background: #fffbf0; color: var(--text); }
+  .delivery-opt .d-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+  .delivery-opt .d-time { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* ── Submit ── */
+  .submit-area { margin-top: 28px; }
+  .btn-submit {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #1a4f7a 0%, #1a7a6e 100%);
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 6px 24px rgba(26,79,122,0.3);
+    letter-spacing: 0.3px;
+  }
+  .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(26,79,122,0.4);
+  }
+  .btn-submit:active { transform: translateY(0); }
+  .btn-submit .wa-icon { font-size: 20px; }
+
+  .note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 14px;
+    line-height: 1.7;
+  }
+  .note a { color: var(--primary); font-weight: 700; text-decoration: none; }
+
+  /* ── Success Toast ── */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--success);
+    color: #fff;
+    font-family: 'Cairo', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 14px 28px;
+    border-radius: 50px;
+    box-shadow: 0 8px 30px rgba(45,186,116,0.4);
+    z-index: 999;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── Error ── */
+  .field-error { font-size: 12px; color: var(--danger); margin-top: 5px; display: none; }
+  .field.has-error input, .field.has-error select, .field.has-error textarea {
+    border-color: var(--danger);
+  }
+  .field.has-error .field-error { display: block; }
+
+  /* ── Upload Box ── */
+  .upload-box {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 18px 14px;
+    text-align: center;
+    cursor: pointer;
+    background: #fafcff;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .upload-box:hover { border-color: var(--accent2); background: #f0fbfa; }
+  .upload-box.has-file { border-color: var(--success); background: #f0fbf5; }
+  .upload-icon { font-size: 24px; }
+  .upload-text { font-size: 13.5px; font-weight: 700; color: var(--primary); }
+  .upload-sub { font-size: 11.5px; color: var(--muted); }
+  .upload-name { font-size: 12px; color: var(--success); font-weight: 700; margin-top: 2px; }
+
+  /* ── Divider ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 24px 0;
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .form-card { padding: 24px 20px; }
+    .services-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .row { grid-template-columns: 1fr; }
+    .delivery-row { flex-wrap: wrap; }
+    .delivery-opt { flex: calc(50% - 5px); }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="badge">✏️ &nbsp;خدمات طلابية بالذكاء الاصطناعي</div>
+    <h1>اطلب <span>واجبك</span><br>نوصّله لك جاهز ✅</h1>
+    <p>ملخصات · مطويات · مشاركات مكتوبة ومصوّرة<br>لجميع المراحل · بجودة عالية وسعر رمزي</p>
+  </div>
+
+  <!-- Features -->
+  <div class="features">
+    <div class="feat"><span class="icon">⚡</span> تسليم سريع</div>
+    <div class="feat"><span class="icon">🤖</span> بتقنية الذكاء الاصطناعي</div>
+    <div class="feat"><span class="icon">💰</span> سعر رمزي</div>
+  </div>
+
+  <!-- Form Card -->
+  <div class="form-card">
+
+    <!-- 1. اختر الخدمة -->
+    <div class="section-title">🎯 اختر الخدمة</div>
+    <div class="services-grid" id="servicesGrid">
+      <div class="service-card" data-value="summary" onclick="selectService(this)">
+        <span class="check">✓</span>
+        <span class="svc-icon">📋</span>
+        <span class="svc-name">ملخص دراسي</span>
+        <span class="svc-desc">ملخص منظّم ومرتّب لأي مادة</span>
+        <span class="svc-price">من 6 ريال</span>
+      </div>
+      <div class="service-card" data-value="brochure" onclick="selectService(this)">
+        <span class="check">✓</span>
+        <span class="svc-icon">📄</span>
+        <span class="svc-name">مطوية</span>
+        <span class="svc-desc">مطوية احترافية جاهزة للطباعة</span>
+        <span class="svc-price">من 7 ريال</span>
+      </div>
+      <div class="service-card" data-value="written_post" onclick="selectService(this)">
+        <span class="check">✓</span>
+        <span class="svc-icon">✍️</span>
+        <span class="svc-name">مشاركة مكتوبة</span>
+        <span class="svc-desc">موضوع أو تقرير مكتوب متكامل</span>
+        <span class="svc-price">من 6 ريال</span>
+      </div>
+      <div class="service-card" data-value="visual_post" onclick="selectService(this)">
+        <span class="check">✓</span>
+        <span class="svc-icon">🖼️</span>
+        <span class="svc-name">مشاركة مصوّرة</span>
+        <span class="svc-desc">إنفوجرافيك أو بوستر تعليمي</span>
+        <span class="svc-price">من 6 ريال</span>
+      </div>
+      <div class="service-card" data-value="worksheet" onclick="selectService(this)">
+        <span class="check">✓</span>
+        <span class="svc-icon">📝</span>
+        <span class="svc-name">ورقة عمل / نموذج</span>
+        <span class="svc-desc">ورقة أسئلة أو أنشطة تفاعلية</span>
+        <span class="svc-price">من 6 ريال</span>
+      </div>
+      <div class="service-card" data-value="presentation" onclick="selectService(this)">
+        <span class="check">✓</span>
+        <span class="svc-icon">📊</span>
+        <span class="svc-name">عرض تقديمي</span>
+        <span class="svc-desc">سلايدات منظّمة وجاهزة للعرض</span>
+        <span class="svc-price">من 15 ريال</span>
+      </div>
+    </div>
+    <input type="hidden" id="selectedService">
+    <div class="field-error" id="serviceError" style="display:none; margin-top:-12px; margin-bottom:12px;">⚠️ الرجاء اختيار نوع الخدمة</div>
+
+    <div class="divider"></div>
+
+    <!-- 2. معلومات الطالب -->
+    <div class="section-title">🎒 معلومات الطالب</div>
+
+    <div class="fields-group">
+      <div class="field" id="field_studentName">
+        <label><span class="req">*</span> اسم الطالب</label>
+        <input type="text" id="studentName" placeholder="مثال: محمد أحمد">
+        <div class="field-error">هذا الحقل مطلوب</div>
+      </div>
+
+      <div class="field">
+        <label><span class="req">*</span> المرحلة الدراسية</label>
+        <div class="level-tabs" id="levelTabs">
+          <div class="level-tab active" data-value="elementary" onclick="selectLevel(this)">🏫 ابتدائي</div>
+          <div class="level-tab" data-value="middle" onclick="selectLevel(this)">🎓 متوسط</div>
+          <div class="level-tab" data-value="high" onclick="selectLevel(this)">📚 ثانوي</div>
+        </div>
+        <input type="hidden" id="studentLevel" value="elementary">
+      </div>
+
+      <div class="row">
+        <div class="field" id="field_grade">
+          <label><span class="req">*</span> الصف</label>
+          <select id="grade">
+            <option value="" disabled selected>اختر الصف</option>
+            <option value="1">الصف الأول</option>
+            <option value="2">الصف الثاني</option>
+            <option value="3">الصف الثالث</option>
+            <option value="4">الصف الرابع</option>
+            <option value="5">الصف الخامس</option>
+            <option value="6">الصف السادس</option>
+          </select>
+          <div class="field-error">اختر الصف</div>
+        </div>
+        <div class="field" id="field_subject">
+          <label><span class="req">*</span> المادة</label>
+          <select id="subject">
+            <option value="" disabled selected>اختر المادة</option>
+            <option>لغة عربية</option>
+            <option>رياضيات</option>
+            <option>علوم</option>
+            <option>دراسات اجتماعية</option>
+            <option>تربية إسلامية</option>
+            <option>لغة إنجليزية</option>
+            <option>تقنية المعلومات</option>
+            <option>أخرى</option>
+          </select>
+          <div class="field-error">اختر المادة</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 3. تفاصيل الطلب -->
+    <div class="section-title">📋 تفاصيل الطلب</div>
+    <div class="fields-group">
+      <div class="field" id="field_topic">
+        <label><span class="req">*</span> موضوع / عنوان الطلب</label>
+        <input type="text" id="topic" placeholder="مثال: تلخيص درس النظام الشمسي">
+        <div class="field-error">اذكر موضوع الطلب</div>
+      </div>
+      <div class="field">
+        <label>مرفق للاسترشاد (اختياري)</label>
+        <div class="upload-box" id="uploadBox" onclick="document.getElementById('attachFile').click()">
+          <span class="upload-icon">📎</span>
+          <span class="upload-text">انقر لرفع صورة أو ملف مشابه لما تريد</span>
+          <span class="upload-sub">PNG · JPG · PDF · حتى 10MB</span>
+          <span class="upload-name" id="uploadName"></span>
+        </div>
+        <input type="file" id="attachFile" accept="image/*,.pdf" style="display:none" onchange="handleFile(this)">
+      </div>
+      <div class="field">
+        <label>تفاصيل إضافية أو ملاحظات</label>
+        <textarea id="details" placeholder="أي تعليمات خاصة، عدد الصفحات، نمط التصميم، وغيرها..."></textarea>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 4. صيغة التسليم -->
+    <div class="section-title">📁 صيغة الملف المطلوبة</div>
+    <p style="font-size:13px; color:var(--muted); margin-bottom:14px; line-height:1.7;">
+      حدّد الصيغة التي تريد استلام الملف بها — كل صيغة لها استخدامها الخاص
+    </p>
+    <div class="delivery-row" id="formatRow">
+      <div class="delivery-opt active" data-value="pdf" onclick="selectFormat(this)">
+        <span class="d-icon">📄</span>
+        PDF
+        <div class="d-time">للطباعة والمشاركة</div>
+      </div>
+      <div class="delivery-opt" data-value="image" onclick="selectFormat(this)">
+        <span class="d-icon">🖼️</span>
+        صورة
+        <div class="d-time">JPG / PNG للواتساب</div>
+      </div>
+      <div class="delivery-opt" data-value="word" onclick="selectFormat(this)">
+        <span class="d-icon">📝</span>
+        وورد
+        <div class="d-time">للتعديل والطباعة</div>
+      </div>
+    </div>
+    <input type="hidden" id="fileFormat" value="pdf">
+
+    <div class="divider"></div>
+
+    <!-- 5. التسليم -->
+    <div class="section-title">🕐 وقت التسليم</div>
+    <div class="delivery-row" id="deliveryRow">
+      <div class="delivery-opt active" data-value="express" onclick="selectDelivery(this)">
+        <span class="d-icon">⚡</span>
+        عاجل
+        <div class="d-time">خلال ساعتين</div>
+      </div>
+      <div class="delivery-opt" data-value="normal" onclick="selectDelivery(this)">
+        <span class="d-icon">🕐</span>
+        عادي
+        <div class="d-time">خلال 24 ساعة</div>
+      </div>
+      <div class="delivery-opt" data-value="flexible" onclick="selectDelivery(this)">
+        <span class="d-icon">📅</span>
+        مرن
+        <div class="d-time">أكثر من يوم</div>
+      </div>
+    </div>
+    <input type="hidden" id="deliverySpeed" value="express">
+
+    <div class="divider"></div>
+
+    <!-- 5. التواصل -->
+    <div class="section-title">📱 بيانات التواصل</div>
+    <div class="field" id="field_phone">
+      <label><span class="req">*</span> رقم واتساب (ولي الأمر)</label>
+      <input type="tel" id="phone" placeholder="05xxxxxxxx" style="direction:ltr; text-align:right;">
+      <div class="field-error">أدخل رقم واتساب صحيح</div>
+    </div>
+
+    <!-- Submit -->
+    <div class="submit-area">
+      <button class="btn-submit" onclick="submitForm()">
+        <span class="wa-icon">💬</span>
+        أرسل الطلب عبر واتساب
+      </button>
+      <p class="note">
+        بالضغط على الإرسال سيتم فتح واتساب مع تفاصيل طلبك<br>
+        للاستفسار: <a href="#">تواصل معنا</a>
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">✅ تم إرسال طلبك بنجاح!</div>
+
+<script>
+  // ── Service Selection ──
+  function selectService(el) {
+    document.querySelectorAll('.service-card').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('selectedService').value = el.dataset.value;
+    document.getElementById('serviceError').style.display = 'none';
+  }
+
+  // ── Level Selection ──
+  function selectLevel(el) {
+    document.querySelectorAll('.level-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('studentLevel').value = el.dataset.value;
+    updateGradeOptions(el.dataset.value);
+  }
+
+  function updateGradeOptions(level) {
+    const g = document.getElementById('grade');
+    g.innerHTML = '<option value="" disabled selected>اختر الصف</option>';
+    const opts = {
+      elementary: ['الصف الأول','الصف الثاني','الصف الثالث','الصف الرابع','الصف الخامس','الصف السادس'],
+      middle: ['الصف الأول متوسط','الصف الثاني متوسط','الصف الثالث متوسط'],
+      high: ['الصف الأول ثانوي','الصف الثاني ثانوي','الصف الثالث ثانوي']
+    };
+    opts[level].forEach((o,i) => {
+      const op = document.createElement('option');
+      op.value = i+1; op.textContent = o;
+      g.appendChild(op);
+    });
+  }
+
+  // ── File Attachment ──
+  function handleFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const box = document.getElementById('uploadBox');
+    box.classList.add('has-file');
+    document.getElementById('uploadName').textContent = '✅ ' + file.name;
+  }
+
+  // ── Format ──
+  function selectFormat(el) {
+    document.querySelectorAll('#formatRow .delivery-opt').forEach(d => d.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('fileFormat').value = el.dataset.value;
+  }
+
+  // ── Delivery ──
+  function selectDelivery(el) {
+    document.querySelectorAll('.delivery-opt').forEach(d => d.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('deliverySpeed').value = el.dataset.value;
+  }
+
+  // ── Validation ──
+  function validate() {
+    let ok = true;
+
+    if (!document.getElementById('selectedService').value) {
+      document.getElementById('serviceError').style.display = 'block';
+      ok = false;
+    }
+
+    const reqFields = [
+      { id: 'studentName', wrapId: 'field_studentName' },
+      { id: 'grade', wrapId: 'field_grade' },
+      { id: 'subject', wrapId: 'field_subject' },
+      { id: 'topic', wrapId: 'field_topic' },
+    ];
+
+    reqFields.forEach(f => {
+      const el = document.getElementById(f.id);
+      const wrap = document.getElementById(f.wrapId);
+      if (!el.value.trim()) { wrap.classList.add('has-error'); ok = false; }
+      else { wrap.classList.remove('has-error'); }
+    });
+
+    const phone = document.getElementById('phone').value.trim();
+    const phoneWrap = document.getElementById('field_phone');
+    if (!phone || !/^05\d{8}$/.test(phone.replace(/\s/g,''))) {
+      phoneWrap.classList.add('has-error'); ok = false;
+    } else { phoneWrap.classList.remove('has-error'); }
+
+    return ok;
+  }
+
+  // ── Submit ──
+  function submitForm() {
+    if (!validate()) {
+      const firstErr = document.querySelector('.has-error, #serviceError[style*="block"]');
+      if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    const serviceMap = {
+      summary: 'ملخص دراسي', brochure: 'مطوية',
+      written_post: 'مشاركة مكتوبة', visual_post: 'مشاركة مصوّرة',
+      worksheet: 'ورقة عمل / نموذج', presentation: 'عرض تقديمي'
+    };
+    const deliveryMap = { express: 'عاجل (خلال ساعتين)', normal: 'عادي (24 ساعة)', flexible: 'مرن' };
+    const levelMap = { elementary: 'ابتدائي', middle: 'متوسط', high: 'ثانوي' };
+
+    const formatMap = { pdf: 'PDF', image: 'صورة (JPG/PNG)', word: 'وورد (Word)' };
+
+    const name    = document.getElementById('studentName').value.trim();
+    const level   = levelMap[document.getElementById('studentLevel').value];
+    const grade   = document.getElementById('grade').options[document.getElementById('grade').selectedIndex].text;
+    const subject = document.getElementById('subject').value;
+    const service = serviceMap[document.getElementById('selectedService').value];
+    const topic   = document.getElementById('topic').value.trim();
+    const details = document.getElementById('details').value.trim();
+    const format  = formatMap[document.getElementById('fileFormat').value];
+    const delivery= deliveryMap[document.getElementById('deliverySpeed').value];
+    const phone   = document.getElementById('phone').value.trim().replace(/\s/g,'');
+
+    const attachFile = document.getElementById('attachFile');
+    const hasAttach = attachFile.files.length > 0;
+    const attachName = hasAttach ? attachFile.files[0].name : null;
+
+    const msg = `🎓 *طلب خدمة طلابية جديد*
+
+👤 *اسم الطالب:* ${name}
+🏫 *المرحلة:* ${level} - ${grade}
+📚 *المادة:* ${subject}
+
+🎯 *الخدمة المطلوبة:* ${service}
+📌 *الموضوع:* ${topic}
+${details ? `📝 *ملاحظات:* ${details}\n` : ''}${hasAttach ? `📎 *مرفق للاسترشاد:* ${attachName} (سيُرسَل بعد هذه الرسالة)\n` : ''}
+📁 *صيغة الملف:* ${format}
+⏱ *وقت التسليم:* ${delivery}
+
+📱 *رقم التواصل:* ${phone}`;
+
+    const waUrl = `https://wa.me/966504371855?text=${encodeURIComponent(msg)}`;
+    window.open(waUrl, '_blank');
+
+    showToast();
+  }
+
+  function showToast() {
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+</script>
+</body>
+</html>
